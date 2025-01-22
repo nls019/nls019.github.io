@@ -9,5 +9,12 @@
 <body>
     <h1>[Welcome!]</h1>
     <p>[This is where I'll keep track of my progress in this class.]</p>
+    <button onclick="castSpell()">Click to cast a Spell!</button>
+    <p id="spellResult"></p>
+    <script>
+        function castSpell() {
+            document.getElementById("spellResult").innerText = "Your spell has been cast successfully!";
+        }
+    </script>
 </body>
 </html>
