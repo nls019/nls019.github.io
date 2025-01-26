@@ -21,13 +21,14 @@
  *                                anything the license permits.
  */
 
-import SceneObject from "/lib/DSViz/SceneObject.js"
+import SceneObject from "./SceneObject.js"
 
 export default class Standard2DVertexObject extends SceneObject {
-  constructor(device, canvasFormat, vertices) {
+  constructor(device, canvasFormat, vertices, shaderNum) {
     super(device, canvasFormat);
     // This assume each vertex has (x, y)
     this._vertices = vertices;
+    this._shaderNum = shaderNum;
   }
   
   async createGeometry() {
@@ -52,11 +53,48 @@ export default class Standard2DVertexObject extends SceneObject {
   }
   
   async createShaders() {
-    let shaderCode = await this.loadShader("/shaders/standard2d.wgsl");
-    this._shaderModule = this._device.createShaderModule({
-      label: " Shader " + this.getName(),
-      code: shaderCode,
-    }); 
+    if (this._shaderNum == 0) {
+      let shaderCode = await this.loadShader("./shaders/grass.wgsl");
+      this._shaderModule = this._device.createShaderModule({
+        label: " Shader " + this.getName(),
+        code: shaderCode,
+      }); 
+    }
+    else if (this._shaderNum == 1) {
+      let shaderCode = await this.loadShader("./shaders/black.wgsl");
+      this._shaderModule = this._device.createShaderModule({
+        label: " Shader " + this.getName(),
+        code: shaderCode,
+      }); 
+    }
+    else if (this._shaderNum == 2) {
+      let shaderCode = await this.loadShader("./shaders/yellow.wgsl");
+      this._shaderModule = this._device.createShaderModule({
+        label: " Shader " + this.getName(),
+        code: shaderCode,
+      }); 
+    }
+    else if (this._shaderNum == 3) {
+      let shaderCode = await this.loadShader("./shaders/yellow-orange.wgsl");
+      this._shaderModule = this._device.createShaderModule({
+        label: " Shader " + this.getName(),
+        code: shaderCode,
+      }); 
+    }
+    else if (this._shaderNum == 4) {
+      let shaderCode = await this.loadShader("./shaders/gray.wgsl");
+      this._shaderModule = this._device.createShaderModule({
+        label: " Shader " + this.getName(),
+        code: shaderCode,
+      }); 
+    }
+    else if (this._shaderNum == 5) {
+      let shaderCode = await this.loadShader("./shaders/silver.wgsl");
+      this._shaderModule = this._device.createShaderModule({
+        label: " Shader " + this.getName(),
+        code: shaderCode,
+      }); 
+    }
   }
   
   async createRenderPipeline() {
@@ -75,7 +113,7 @@ export default class Standard2DVertexObject extends SceneObject {
           format: this._canvasFormat   // the target canvas format
         }]
       }
-    }); 
+    });
   }
   
   render(pass) {

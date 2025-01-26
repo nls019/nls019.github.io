@@ -25,7 +25,7 @@ export default class Renderer {
   constructor(canvas) {
     this._canvas = canvas;
     this._objects = [];
-    this._clearColor = { r: 0, g: 56/255, b: 101/255, a: 1 }; // Bucknell Blue
+    this._clearColor = { r: 107/255, g: 228/255, b: 253/255, a: 1 }; // light blue
   }
   
   async init() {
