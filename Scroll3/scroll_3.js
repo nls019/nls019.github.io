@@ -1,5 +1,5 @@
-import FilteredRenderer from 'FilterRenderer.js'
-import Standard2DVertexColorObject from 'Standard2DVertexColorObject.js'
+import FilteredRenderer from '/Scroll3/FilterRenderer.js'
+import Standard2DVertexColorObject from '/Scroll3/Standard2DVertexColorObject.js'
 
 async function init() {
   // Create a canvas tag
