@@ -21,7 +21,7 @@
  *                                anything the license permits.
  */
 
-import SceneObject from "./SceneObject.js"
+import SceneObject from "/Quest1/lib/DSViz/SceneObject.js"
 
 export default class Standard2DVertexObject extends SceneObject {
   constructor(device, canvasFormat, vertices, shaderNum) {
@@ -54,42 +54,42 @@ export default class Standard2DVertexObject extends SceneObject {
   
   async createShaders() {
     if (this._shaderNum == 0) {
-      let shaderCode = await this.loadShader("./shaders/grass.wgsl");
+      let shaderCode = await this.loadShader("/Quest1/shaders/grass.wgsl");
       this._shaderModule = this._device.createShaderModule({
         label: " Shader " + this.getName(),
         code: shaderCode,
       }); 
     }
     else if (this._shaderNum == 1) {
-      let shaderCode = await this.loadShader("./shaders/black.wgsl");
+      let shaderCode = await this.loadShader("/Quest1/shaders/black.wgsl");
       this._shaderModule = this._device.createShaderModule({
         label: " Shader " + this.getName(),
         code: shaderCode,
       }); 
     }
     else if (this._shaderNum == 2) {
-      let shaderCode = await this.loadShader("./shaders/yellow.wgsl");
+      let shaderCode = await this.loadShader("/Quest1/shaders/yellow.wgsl");
       this._shaderModule = this._device.createShaderModule({
         label: " Shader " + this.getName(),
         code: shaderCode,
       }); 
     }
     else if (this._shaderNum == 3) {
-      let shaderCode = await this.loadShader("./shaders/yellow-orange.wgsl");
+      let shaderCode = await this.loadShader("/Quest1/shaders/yellow-orange.wgsl");
       this._shaderModule = this._device.createShaderModule({
         label: " Shader " + this.getName(),
         code: shaderCode,
       }); 
     }
     else if (this._shaderNum == 4) {
-      let shaderCode = await this.loadShader("./shaders/gray.wgsl");
+      let shaderCode = await this.loadShader("/Quest1/shaders/gray.wgsl");
       this._shaderModule = this._device.createShaderModule({
         label: " Shader " + this.getName(),
         code: shaderCode,
       }); 
     }
     else if (this._shaderNum == 5) {
-      let shaderCode = await this.loadShader("./shaders/silver.wgsl");
+      let shaderCode = await this.loadShader("/Quest1/shaders/silver.wgsl");
       this._shaderModule = this._device.createShaderModule({
         label: " Shader " + this.getName(),
         code: shaderCode,

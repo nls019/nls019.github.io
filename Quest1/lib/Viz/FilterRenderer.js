@@ -1,3 +1,5 @@
+import Renderer from '/Quest1/lib/Viz/2DRenderer.js'
+
 export default class FilteredRenderer extends Renderer{
     constructor(canvas) {
       super(canvas);
