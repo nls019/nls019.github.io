@@ -36,7 +36,7 @@ export default class ParticleSystemObject extends SceneObject {
   
   async createParticleGeometry() {
     // Create particles
-    this._particles = new Float32Array(this._numParticles * 6); // [x, y, ix, iy, vx, vy]
+    this._particles = new Float32Array(this._numParticles * 8); // [x, y, ix, iy, vx, vy, il, l]
     // name the ping-pong buffers _particleBuffers
     this._particleBuffers = [
       this._device.createBuffer({
@@ -60,14 +60,18 @@ export default class ParticleSystemObject extends SceneObject {
   resetParticles() {
     for (let i = 0; i < this._numParticles; ++i) {
       // random position between [-1, 1] x [-1, 1]
-      this._particles[6 * i + 0] = (Math.random() * 2 - 1); // [-1, 1] 
-      this._particles[6 * i + 1] = (Math.random() * 2 - 1);
+      this._particles[8 * i + 0] = (Math.random() * 2 - 1); // [-1, 1] 
+      this._particles[8 * i + 1] = (Math.random() * 2 - 1);
       // store the initial positions
-      this._particles[6 * i + 2] = this._particles[6 * i + 0];
-      this._particles[6 * i + 3] = this._particles[6 * i + 1];
+      this._particles[8 * i + 2] = this._particles[6 * i + 0];
+      this._particles[8 * i + 3] = this._particles[6 * i + 1];
       // TODO 6: update the velocity
-      this._particles[6 * i + 4] = (Math.random() / 2);
-      this._particles[6 * i + 5] = (Math.random() / 2);
+      this._particles[8 * i + 4] = (Math.random() / 32) - 1/64;
+      this._particles[8 * i + 5] = (Math.random() / 32) - 1/64;
+      // Update initial lifespan
+      this._particles[8 * i + 6] = (Math.random() * 127) + 128;
+      // Update lifespan
+      this._particles[8 * i + 7] = this._particles[6 * i + 6];
     }
     // Copy from CPU to GPU
     this._step = 0;

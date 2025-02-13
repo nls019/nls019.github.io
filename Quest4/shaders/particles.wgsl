@@ -24,7 +24,10 @@
 // TODO 3: Define a struct to store a particle
 struct Particle {
   position: vec2f,
-  velocity: vec2f
+  init_position: vec2f,
+  velocity: vec2f,
+  init_lifespan: f32,
+  lifespan: f32
 };
 
 // TODO 4: Write the bind group spells here using array<Particle>
@@ -36,7 +39,10 @@ struct Particle {
 fn vertexMain(@builtin(instance_index) idx: u32, @builtin(vertex_index) vIdx: u32) -> @builtin(position) vec4f {
   // TODO 5: Revise the vertex shader to draw circle to visualize the particles
   let particle = particlesIn[idx].position;
-  let size = 0.0125;
+  let lifespan = particlesIn[idx].lifespan;
+  let init_lifespan = particlesIn[idx].init_lifespan;
+  let size = 0.0125 * (lifespan / init_lifespan);
+  //let size = 0.0125;
   let pi = 3.14159265;
   let theta = 2.f * pi / 8 * f32(vIdx);
   let x = cos(theta) * size;
@@ -57,10 +63,18 @@ fn computeMain(@builtin(global_invocation_id) global_id: vec3u) {
   if (idx < arrayLength(&particlesIn)) {
     particlesOut[idx].position[0] = particlesIn[idx].position[0] + particlesIn[idx].velocity[0];
     particlesOut[idx].position[1] = particlesIn[idx].position[1] + particlesIn[idx].velocity[1];
+    particlesOut[idx].lifespan = particlesIn[idx].lifespan - 1;
+    
     
     // TOOD 7: Add boundary checking and respawn the particle when it is offscreen
     if (particlesOut[idx].position[0] < -1 || particlesOut[idx].position[0] > 1 || particlesOut[idx].position[1] < -1 || particlesOut[idx].position[1] > 1) {
-      
+      particlesOut[idx].position[0] = particlesIn[idx].init_position[0];
+      particlesOut[idx].position[1] = particlesIn[idx].init_position[1];
+    }
+    else if (particlesOut[idx].lifespan <= 0) {
+      particlesOut[idx].position[0] = particlesIn[idx].init_position[0];
+      particlesOut[idx].position[1] = particlesIn[idx].init_position[1];
+      particlesOut[idx].lifespan = particlesIn[idx].init_lifespan;
     }
   }
 }
