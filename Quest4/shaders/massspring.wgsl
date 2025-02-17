@@ -25,37 +25,52 @@ struct Particle {
   p: vec2f,   // the particle position
   v: vec2f,   // the particle velocity
   dv: vec2f,  // the velocity update
-  m: f32,     // the partilce pass
+  m: f32,     // the partilce mass
   dummy: f32, // a dummy value for memory alignment
-}
+};
 
 struct Spring {
   pts: vec2f, // the indices of two connected partilces
   l: f32,     // the original spring length
   s: f32      // the stiffness coefficient
-}
+};
+
+struct VertexOutput {
+  @builtin(position) pos: vec4f,
+  @location(0) texCoords: vec2f
+};
 
 // TODO 4: bind the storage buffer variables
-
-
-
+@group(0) @binding(0) var<storage> particlesIn: array<Particle>;
+@group(0) @binding(1) var<storage, read_write> particlesOut: array<Particle>;
+@group(0) @binding(2) var<storage> springsIn: array<Spring>;
+@group(0) @binding(3) var inTexture: texture_2d<f32>;
+@group(0) @binding(4) var inSampler: sampler;
+//@group(0) @binding(5) var<uniform> forceUpdates: vec2f;
 
 
 @vertex
-fn vertexMain(@builtin(instance_index) idx: u32, @builtin(vertex_index) vIdx: u32) -> @builtin(position) vec4f {
+fn vertexMain(@builtin(instance_index) idx: u32, @builtin(vertex_index) vIdx: u32) -> VertexOutput {
   // draw circles to represent a particle
   let particle = particlesIn[idx];
   let r = particle.m;
-  let pi = 3.14159265;
-  let theta = 2. * pi / 8 * f32(vIdx);
-  let x = cos(theta) * r;
-  let y = sin(theta) * r;
-  return vec4f(vec2f(x + particle.p[0], y + particle.p[1]), 0, 1);
+  var pos = array<vec2f, 6>(
+    vec2f(particle.p[0] - r, particle.p[1] - r), vec2f(particle.p[0] + r, particle.p[1] - r), vec2f(particle.p[0] - r, particle.p[1] + r),
+    vec2f(particle.p[0] + r, particle.p[1] - r), vec2f(particle.p[0] + r, particle.p[1] + r), vec2f(particle.p[0] - r, particle.p[1] + r)
+  );
+  var texCoords = array<vec2f, 6>(
+    vec2f(0, 1), vec2f(1, 1), vec2f(0, 0),
+    vec2f(1, 1), vec2f(1, 0), vec2f(0, 0)
+  );
+  var out: VertexOutput;
+  out.pos = vec4f(pos[vIdx], 0, 1);
+  out.texCoords = texCoords[vIdx];
+  return out;
 }
 
 @fragment
-fn fragmentMain() -> @location(0) vec4f {
-  return vec4f(238.f/255, 118.f/255, 35.f/255, 1); // (R, G, B, A)
+fn fragmentMain(@location(0) texCoords: vec2f) -> @location(0) vec4f {
+  return textureSample(inTexture, inSampler, texCoords);
 }
 
 @vertex
@@ -91,8 +106,13 @@ fn computeMain(@builtin(global_invocation_id) global_id: vec3u) {
     let force = spring.s * (dist - spring.l);
     
     // TODO 5b: compute the delta velocity using Netwon's law of motion
-    
-    
+    let dir = normalize(diff);
+    if (massA >= 0.000001) {
+      particlesOut[aIdx].dv += (force * dir) / (massA * 1000); // mass in grams
+    }
+    if (massB >= 0.000001) {
+      particlesOut[bIdx].dv -= (force * dir) / (massB * 1000); // opposite dir
+    }
   }
 }
 
@@ -102,9 +122,29 @@ fn updateMain(@builtin(global_invocation_id) global_id: vec3u) {
   
   if (idx < arrayLength(&particlesIn)) {
     var particle = particlesIn[idx];
-    particlesOut[idx].p = particle.p + particle.v + particlesOut[idx].dv; // update the posistion
-    particlesOut[idx].v = (particle.v + particlesOut[idx].dv) * 0.95;     // damping
-    particlesOut[idx].dv = vec2f(0, 0);                                   // reset delta velocity to zeros
-    particlesOut[idx].m = particle.m;                                     // copy the mass over
+    if (particle.dummy != 1) {
+      particlesOut[idx].p = particle.p + particle.v + particlesOut[idx].dv; // update the position
+      particlesOut[idx].v = (particle.v + particlesOut[idx].dv) * 0.95;     // damping
+      particlesOut[idx].dv = vec2f(0, 0);                                   // reset delta velocity to zeros
+      particlesOut[idx].m = particle.m;                                     // copy the mass over
+
+      //particlesOut[idx].v[0] += forceUpdates[0];
+      //particlesOut[idx].v[1] += forceUpdates[1];
+
+      //particlesOut[idx].v += vec2f(0, -0.00001);                              // gravity
+      let current = generateCurrent(f32(particlesIn[idx].p.y), f32(particlesIn[idx].p.x), 0.00005); // "Wind" effect based on y position
+      particlesOut[idx].v[0] += current[0];
+      particlesOut[idx].v[1] += current[1];
+    }
   }
+}
+
+fn generateCurrent(time: f32, frequency: f32, strength: f32) -> vec2f {
+  let angle = random(vec2f(time, frequency)) * 2 * 3.14159265;
+  return vec2<f32>(cos(angle), sin(angle)) * strength;
+}
+
+fn random(st: vec2f) -> f32
+{
+    return fract(sin(dot(st.xy, vec2f(12.9898,78.233))) * 43758.5453123);
 }

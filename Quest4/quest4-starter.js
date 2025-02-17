@@ -28,7 +28,9 @@
 
 import Renderer from '/lib/Viz/2DRenderer.js'
 import ParticleSystemObject from '/lib/DSViz/ParticleSystemObject.js'
+import MassSpringSystemObject from '/lib/DSViz/MassSpringSystemObject.js'
 import StandardTextObject from '/lib/DSViz/StandardTextObject.js'
+import Standard2DFullScreenObject from '/lib/DSViz/Standard2DFullScreenObject.js';
 
 async function init() {
   // Create a canvas tag
@@ -38,11 +40,25 @@ async function init() {
   // Create a 2d animated renderer
   const renderer = new Renderer(canvasTag);
   await renderer.init();
-  const particles = new ParticleSystemObject(renderer._device, renderer._canvasFormat);
+  await renderer.appendSceneObject(new Standard2DFullScreenObject(renderer._device, renderer._canvasFormat, "/assets/ocean.jpg"));
+  const particles = new MassSpringSystemObject(renderer._device, renderer._canvasFormat, "/assets/jellyfish.png");
   await renderer.appendSceneObject(particles);
   let fps = '??';
   var fpsText = new StandardTextObject('fps: ' + fps);
   
+  //window.addEventListener("keydown", (e) => {
+  //  switch (e.key) {
+  //    case 'ArrowUp': case 'w': case 'W':
+  //      particles.forceUp(0.001);
+  //      break;
+  //    case 'ArrowDown': case 's': case 'S':   
+  //      break;
+  //    case 'ArrowLeft': case 'a': case 'A':  
+  //      break;
+  //    case 'ArrowRight': case 'd': case 'D': 
+  //      break;
+  //    }
+  //});
   // run animation at 60 fps
   var frameCnt = 0;
   var tgtFPS = 60;
