@@ -209,8 +209,56 @@ export default class TwoDGridSegmented {
   // an implementation of the winding number to check if a point is inside a polygon or not
   isInsideWindingNumber(p) {
     // TODO: Put you Winding Number implementation here
-    
-    return false;
+    let w1 = 0;
+    let w2 = 0;
+    for (var i = 0; i < this._polygon.length - 1; ++i) {
+      if (this._polygon[i][1] < this._polygon[i+1][1]) {
+        if (p[1] >= this._polygon[i][1] && p[1] <= this._polygon[i+1][1]) {
+          if (p[0] >= this._polygon[i][0]) {
+            if (this._polygon.isInside(this._polygon[i], this._polygon[i+1], p)) {
+              w1 += 1;
+            }
+            else {
+              w1 -= 1;
+            }
+          }
+          else {
+            if (this._polygon.isInside(this._polygon[i], this._polygon[i+1], p)) {
+              w2 += 1;
+            }
+            else {
+              w2 -= 1;
+            }
+          }
+        }
+      }
+      else {
+        if (p[1] <= this._polygon[i][1] && p[1] >= this._polygon[i+1][1]) {
+          if (p[0] >= this._polygon[i][0]) {
+            if (this._polygon.isInside(this._polygon[i], this._polygon[i+1], p)) {
+              w1 += 1;
+            }
+            else {
+              w1 -= 1;
+            }
+          }
+          else {
+            if (this._polygon.isInside(this._polygon[i], this._polygon[i+1], p)) {
+              w2 += 1;
+            }
+            else {
+              w2 -= 1;
+            }
+          }
+        }
+      }
+    }
+    if (w1 == 0 || w2 == 0) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
   
   isInside(segments, p) {

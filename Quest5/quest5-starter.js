@@ -47,9 +47,14 @@ async function init() {
     canvasTag.addEventListener('mousemove', (e) => {
       var mouseX = (e.clientX / window.innerWidth) * 2 - 1;
       var mouseY = (-e.clientY / window.innerHeight) * 2 + 1;
-      for () {
-        if (polygon._polygon.isInside()) {
-
+      let p = [mouseX, mouseY];
+      for (var i = 0; i < polygon._polygon._polygon.length - 1; ++i) {
+        if (!polygon._polygon.isInside(polygon._polygon._polygon[i], polygon._polygon._polygon[i+1], p)) {
+          console.log("outside");
+          break;
+        }
+        else if (i == polygon._polygon._polygon.length - 2) {
+          console.log("inside");
         }
       }
     });
