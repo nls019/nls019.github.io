@@ -53,7 +53,7 @@ async function init() {
   var inOut = "Unknown";
   changePolygon(renderer, polygon, curShape, grids);
   let fps = '??';
-  var fpsText = new StandardTextObject('S: change shape' + 'Status: ' + inOut);
+  var fpsText = new StandardTextObject('S: change shape\n' + 'Status: ' + inOut);
 
   window.addEventListener("keydown", (e) => {
     switch (e.key) {
@@ -124,7 +124,7 @@ async function init() {
   lastCalled = Date.now();
   renderFrame();
   setInterval(() => { 
-    fpsText.updateText('S: change shape' + 'Status: ' + inOut);
+    fpsText.updateText('S: change shape\n' + 'Status: ' + inOut);
   }, 100); // call every 100s ms
   return renderer;
 }
