@@ -21,7 +21,7 @@
  *                                anything the license permits.
  */
  
-import PGA2D from '/lib/Math/PGA2D.js';
+import PGA2D from '/Quest5/lib/Math/PGA2D.js';
  
 export default class TwoDGridSegmented {
   // define enum for node types
@@ -32,19 +32,19 @@ export default class TwoDGridSegmented {
   
   constructor(polygon, grid_size) {
     this._polygon = JSON.parse(JSON.stringify(polygon)); // deep copy the input polygon
-    if (this._polygon[0].length != 2) throw new Error("TwoDGrid works only for 2D Polygons.");
+    if (this._polygon._polygon[0].length != 2) throw new Error("TwoDGrid works only for 2D Polygons.");
     this._grid_size = grid_size;
     if (Math.floor(this._grid_size) != this._grid_size || this._grid_size < 1) throw new Error("TwoDGrid grid size must be an integer greater than 0.");
-    this._dirs = Array.from({ length: this._polygon.length - 1 }, () => []);
+    this._dirs = Array.from({ length: this._polygon._polygon.length - 1 }, () => []);
     // Compute the bounding box and which line segments are in the current cell
     let minx = Number.MAX_VALUE;
     let miny = Number.MAX_VALUE;
     let maxx = -Number.MAX_VALUE;
     let maxy = -Number.MAX_VALUE;
     let lines = [];
-    for (let i = 0; i < this._polygon.length - 1; ++i) {
-      const v0 = this._polygon[i];
-      const v1 = this._polygon[i + 1];
+    for (let i = 0; i < this._polygon._polygon.length - 1; ++i) {
+      const v0 = this._polygon._polygon[i];
+      const v1 = this._polygon._polygon[i + 1];
       for (let j = 0; j < 2; ++j) this._dirs[i].push((v1[j] - v0[j]));
       minx = Math.min(v0[0], minx);
       miny = Math.min(v0[1], miny);
@@ -60,7 +60,7 @@ export default class TwoDGridSegmented {
   
   // A helper function compute the point on a segment given an edge index and t value
   getPointOnSegment(idx, t) {
-    return Array.from({ length: 2 }, (_, i) => this._polygon[idx][i] + t * this._dirs[idx][i]);
+    return Array.from({ length: 2 }, (_, i) => this._polygon._polygon[idx][i] + t * this._dirs[idx][i]);
   }
   
   // A function to initialize the cells
@@ -113,12 +113,12 @@ export default class TwoDGridSegmented {
   
   // An important function to cut the line segments into cells
   computeCellLineSegments() {
-    for (let i = 0; i < this._polygon.length - 1; ++i) {
+    for (let i = 0; i < this._polygon._polygon.length - 1; ++i) {
       // compute the cell index of the start point
-      const v0 = this._polygon[i];
+      const v0 = this._polygon._polygon[i];
       const [sx, sy] = this.getCellIdx(v0);
       // compute the cell index of the end point
-      const v1 = this._polygon[i + 1];
+      const v1 = this._polygon._polygon[i + 1];
       const [ex, ey] = this.getCellIdx(v1);
       if (sx == ex && sy == ey) { // the entire edge is in a cell
         const c = this._cells[sy][sx];
@@ -211,11 +211,11 @@ export default class TwoDGridSegmented {
     // TODO: Put you Winding Number implementation here
     let w1 = 0;
     let w2 = 0;
-    for (var i = 0; i < this._polygon.length - 1; ++i) {
-      if (this._polygon[i][1] < this._polygon[i+1][1]) {
-        if (p[1] >= this._polygon[i][1] && p[1] <= this._polygon[i+1][1]) {
-          if (p[0] >= this._polygon[i][0]) {
-            if (this._polygon.isInside(this._polygon[i], this._polygon[i+1], p)) {
+    for (var i = 0; i < this._polygon._polygon.length - 1; ++i) {
+      if (this._polygon._polygon[i][1] < this._polygon._polygon[i+1][1]) {
+        if (p[1] >= this._polygon._polygon[i][1] && p[1] <= this._polygon._polygon[i+1][1]) {
+          if (p[0] >= Math.max(this._polygon._polygon[i][0], this._polygon._polygon[i+1][0])) {
+            if (PGA2D.isInside(this._polygon._polygon[i], this._polygon._polygon[i+1], p)) {
               w1 += 1;
             }
             else {
@@ -223,7 +223,7 @@ export default class TwoDGridSegmented {
             }
           }
           else {
-            if (this._polygon.isInside(this._polygon[i], this._polygon[i+1], p)) {
+            if (PGA2D.isInside(this._polygon._polygon[i], this._polygon._polygon[i+1], p)) {
               w2 += 1;
             }
             else {
@@ -233,9 +233,9 @@ export default class TwoDGridSegmented {
         }
       }
       else {
-        if (p[1] <= this._polygon[i][1] && p[1] >= this._polygon[i+1][1]) {
-          if (p[0] >= this._polygon[i][0]) {
-            if (this._polygon.isInside(this._polygon[i], this._polygon[i+1], p)) {
+        if (p[1] <= this._polygon._polygon[i][1] && p[1] >= this._polygon._polygon[i+1][1]) {
+          if (p[0] >= Math.max(this._polygon._polygon[i][0], this._polygon._polygon[i+1][0])) {
+            if (PGA2D.isInside(this._polygon._polygon[i], this._polygon._polygon[i+1], p)) {
               w1 += 1;
             }
             else {
@@ -243,7 +243,7 @@ export default class TwoDGridSegmented {
             }
           }
           else {
-            if (this._polygon.isInside(this._polygon[i], this._polygon[i+1], p)) {
+            if (PGA2D.isInside(this._polygon._polygon[i], this._polygon._polygon[i+1], p)) {
               w2 += 1;
             }
             else {
@@ -254,10 +254,10 @@ export default class TwoDGridSegmented {
       }
     }
     if (w1 == 0 || w2 == 0) {
-      return true;
+      return false;
     }
     else {
-      return false;
+      return true;
     }
   }
   

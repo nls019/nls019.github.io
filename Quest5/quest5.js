@@ -29,6 +29,14 @@
 import Renderer from '/lib/Viz/2DRenderer.js'
 import PolygonObject from '/lib/DSViz/PolygonObject.js'
 import StandardTextObject from '/lib/DSViz/StandardTextObject.js'
+import TwoDGridSegmented from './lib/DS/TwoDGridSegmented.js';
+
+async function changePolygon(renderer, polygons, curShape, grids) {
+  renderer._objects = [];
+  await renderer.appendSceneObject(polygons[curShape]);
+  console.log(polygons[curShape]._polygon);
+  grids[curShape] = new TwoDGridSegmented(polygons[curShape]._polygon, 4);
+}
 
 async function init() {
   // Create a canvas tag
@@ -38,23 +46,62 @@ async function init() {
   // Create a 2d animated renderer
   const renderer = new Renderer(canvasTag);
   await renderer.init();
-  const polygon = new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/box.polygon');
-  await renderer.appendSceneObject(polygon);
+  var curShape = 0;
+  const polygon = [new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/box.polygon'), new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/circle.polygon'),
+    new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/star.polygon'), new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/human.polygon')];
+  var grids = [];
+  var inOut = "Unknown";
+  changePolygon(renderer, polygon, curShape, grids);
   let fps = '??';
-  var fpsText = new StandardTextObject('fps: ' + fps);
-  
+  var fpsText = new StandardTextObject('S: change shape' + 'Status: ' + inOut);
+
+  window.addEventListener("keydown", (e) => {
+    switch (e.key) {
+      case 's':
+        if (curShape < 3) {
+          curShape++;
+        }
+        else {
+          curShape = 0;
+        }
+        changePolygon(renderer, polygon, curShape, grids);
+        break;
+      }
+  });
   // mouse interactions
     canvasTag.addEventListener('mousemove', (e) => {
       var mouseX = (e.clientX / window.innerWidth) * 2 - 1;
       var mouseY = (-e.clientY / window.innerHeight) * 2 + 1;
       let p = [mouseX, mouseY];
-      for (var i = 0; i < polygon._polygon._polygon.length - 1; ++i) {
-        if (!polygon._polygon.isInside(polygon._polygon._polygon[i], polygon._polygon._polygon[i+1], p)) {
-          console.log("outside");
-          break;
+      if (curShape == 0 || curShape == 1) {
+        for (var i = 0; i < polygon[curShape]._polygon._polygon.length - 1; ++i) {
+          if (!polygon[curShape]._polygon.isInside(polygon[curShape]._polygon._polygon[i], polygon[curShape]._polygon._polygon[i+1], p)) {
+            console.log("outside");
+            if (inOut != "Outside") {
+              inOut = "Outside";
+            }
+            break;
+          }
+          else if (i == polygon[curShape]._polygon._polygon.length - 2) {
+            console.log("inside");
+            if (inOut != "Inside") {
+              inOut = "Inside";
+            }
+          }
         }
-        else if (i == polygon._polygon._polygon.length - 2) {
+      }
+      else {
+        if (grids[curShape].isInsideWindingNumber(p)) {
           console.log("inside");
+          if (inOut != "Inside") {
+            inOut = "Inside";
+          }
+        }
+        else {
+          console.log("outside");
+          if (inOut != "Outside") {
+            inOut = "Outside";
+          }
         }
       }
     });
@@ -77,9 +124,8 @@ async function init() {
   lastCalled = Date.now();
   renderFrame();
   setInterval(() => { 
-    fpsText.updateText('fps: ' + frameCnt);
-    frameCnt = 0;
-  }, 1000); // call every 1000 ms
+    fpsText.updateText('S: change shape' + 'Status: ' + inOut);
+  }, 100); // call every 100s ms
   return renderer;
 }
 
