@@ -26,10 +26,10 @@
 // Chrome & Edge 113+ : Enable Vulkan, Default ANGLE Vulkan, Vulkan from ANGLE, Unsafe WebGPU Support, and WebGPU Developer Features (if exsits)
 // Firefox Nightly: sudo snap install firefox --channel=latext/edge or download from https://www.mozilla.org/en-US/firefox/channel/desktop/
 
-import Renderer from '/lib/Viz/2DRenderer.js'
-import PolygonObject from '/lib/DSViz/PolygonObject.js'
-import StandardTextObject from '/lib/DSViz/StandardTextObject.js'
-import TwoDGridSegmented from './lib/DS/TwoDGridSegmented.js';
+import Renderer from '/Quest5/lib/Viz/2DRenderer.js'
+import PolygonObject from '/Quest5/lib/DSViz/PolygonObject.js'
+import StandardTextObject from '/Quest5/lib/DSViz/StandardTextObject.js'
+import TwoDGridSegmented from '/Quest5/lib/DS/TwoDGridSegmented.js';
 
 async function changePolygon(renderer, polygons, curShape, grids) {
   renderer._objects = [];
@@ -47,8 +47,8 @@ async function init() {
   const renderer = new Renderer(canvasTag);
   await renderer.init();
   var curShape = 0;
-  const polygon = [new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/box.polygon'), new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/circle.polygon'),
-    new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/star.polygon'), new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/human.polygon')];
+  const polygon = [new PolygonObject(renderer._device, renderer._canvasFormat, '/Quest5/assets/box.polygon'), new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/circle.polygon'),
+    new PolygonObject(renderer._device, renderer._canvasFormat, '/Quest5/assets/star.polygon'), new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/human.polygon')];
   var grids = [];
   var inOut = "Unknown";
   changePolygon(renderer, polygon, curShape, grids);
