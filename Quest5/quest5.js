@@ -47,8 +47,8 @@ async function init() {
   const renderer = new Renderer(canvasTag);
   await renderer.init();
   var curShape = 0;
-  const polygon = [new PolygonObject(renderer._device, renderer._canvasFormat, '/Quest5/assets/box.polygon'), new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/circle.polygon'),
-    new PolygonObject(renderer._device, renderer._canvasFormat, '/Quest5/assets/star.polygon'), new PolygonObject(renderer._device, renderer._canvasFormat, '/assets/human.polygon')];
+  const polygon = [new PolygonObject(renderer._device, renderer._canvasFormat, '/Quest5/assets/box.polygon'), new PolygonObject(renderer._device, renderer._canvasFormat, '/Quest5/assets/circle.polygon'),
+    new PolygonObject(renderer._device, renderer._canvasFormat, '/Quest5/assets/star.polygon'), new PolygonObject(renderer._device, renderer._canvasFormat, '/Quest5/assets/human.polygon')];
   var grids = [];
   var inOut = "Unknown";
   changePolygon(renderer, polygon, curShape, grids);
