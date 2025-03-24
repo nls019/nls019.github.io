@@ -566,14 +566,26 @@ fn computeOrthogonalMain(@builtin(global_invocation_id) global_id: vec3u) {
       if (light.params[3] == 1) {
         // implementing Phong shading
         var reflectedDir = reflect(lightInfo.lightdir, normal);
-        let ks = vec4f(0, 0, 0, 1);
+        let ks = vec4f(1, 1, 1, 1);
         var specColor = ks * lightInfo.intensity * pow(dot(rdir, -1 * reflectedDir), 60);
         let ka = vec4f(0.1,0.1,0.1,0.1);
         var ambientColor = ka * lightInfo.intensity;
-        var color = emit + diffuse + specColor + ambientColor;
+        color = emit + diffuse + specColor + ambientColor;
       }
       if (light.params[3] == 2) {
         // implementing Toon shading
+        var reflectedDir = reflect(lightInfo.lightdir, normal);
+        let ks = vec4f(1, 1, 1, 1);
+        var specColor = ks * lightInfo.intensity * pow(dot(rdir, -1 * reflectedDir), 60);
+        let ka = vec4f(0.1,0.1,0.1,0.1);
+        var ambientColor = ka * lightInfo.intensity;
+        color = emit + diffuse + specColor + ambientColor;
+
+        let r = floor(color[0] * 7) / 7;
+        let g = floor(color[1] * 7) / 7;
+        let b = floor(color[2] * 7) / 7;
+        let a = color[3];
+        color = vec4f(r, g, b, a);
       }
       
     }
