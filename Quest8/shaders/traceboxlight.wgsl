@@ -587,6 +587,19 @@ fn computeOrthogonalMain(@builtin(global_invocation_id) global_id: vec3u) {
         let a = color[3];
         color = vec4f(r, g, b, a);
       }
+      if (light.params[3] == 3) {
+        // implementing Blinn-Phong shading
+        var viewDirection = normalize(hitPt - lightPos);
+        if (light.params[2] == 1) {
+          viewDirection = normalize(lightDir);
+        }
+        var halfwayDir = normalize(lightInfo.lightdir + viewDirection);
+        let ks = vec4f(0, 0, 0, 1);
+        var specColor = ks * lightInfo.intensity * pow(max(dot(normal, halfwayDir), 0), 60);
+        let ka = vec4f(0.1,0.1,0.1,0.1);
+        var ambientColor = ka * lightInfo.intensity;
+        color = emit + diffuse + specColor + ambientColor;
+      }
       
     }
     // set the final color to the pixel

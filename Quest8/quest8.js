@@ -71,7 +71,7 @@ async function init() {
         tracerObj.updateLight(lights[curLight]);
         break;
       case 's': case 'S':   
-        if (curShading < 2) {
+        if (curShading < 3) {
           curShading++;
         }
         else {
