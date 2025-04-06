@@ -105,8 +105,8 @@ async function init() {
   let sevenM = PGA2D.normalizeMotor(PGA2D.createRotor(Math.PI / 4185, center[0], center[1]));
   let eightM = PGA2D.normalizeMotor(PGA2D.createRotor(Math.PI / 8185, center[0], center[1]));
 
-  // add grayscale filter
-  //await renderer.appendFilterObject(new ImageGrayscaleFilterObject(renderer._device, renderer._canvasFormat));
+  // add grayscale filter and blur
+  await renderer.appendFilterObject(new ImageGrayscaleFilterObject(renderer._device, renderer._canvasFormat));
 
   setInterval(() => { 
     renderer.render();
